@@ -16,7 +16,7 @@
 
   Output: The center and width and length of the atoms in the XY plane. I.e., the z-coordinates can be ignored.
 
-<b>3. Show the domains in SVG as ovals using the center, width, and length</b>
+<b>3. Show the domains in SVG as ovals using the center, width, and length</b> (by Jack Lin)
 
   Input: A list of nodes with center, width, and length
 
@@ -47,4 +47,4 @@ Sarah Zhao
 
 Zhiyu Cheng
 
-(Jack Lin)
+Jack Lin
