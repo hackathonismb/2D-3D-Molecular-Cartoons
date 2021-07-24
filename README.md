@@ -10,7 +10,7 @@
 
   Output: A list of residue numbers for each domain
   
-<b>2. Find the center and width and length of the area (XY plane) covered by the atoms in the domain</b>
+<b>2. Find the center and width and length of the area (XY plane) covered by the atoms in the domain</b> (by Kevin Yang)
 
   Input: a list of atoms with x,y,z coordinates
 
