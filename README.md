@@ -22,7 +22,7 @@
 
   Output: a SVG text showing the nodes as ovals using the center, width and length
 
-<b>4. Use simple shapes (e.g., triangles, rectangles, ovals, hexagone, pentagon, etc) to represent the domains. Add some 3D effect and label to the shape.</b> (By Sarah Zhao and others)
+<b>4. Use simple shapes (e.g., triangles, rectangles, ovals, hexagone, pentagon, etc) to represent the domains. Add some 3D effect and label to the shape.</b> (By Sarah Zhao, Li Chuin Chong, and Zhiyu Cheng)
 
   Input: a shape, e.g., hexagon
 
@@ -30,7 +30,7 @@
 
   Process: You can use graphics software such as adobe photoshop, or use CSS to achieve the effect. Two reference pages: http://reactome.org/icon-lib/receptor and http://smart.embl-heidelberg.de/smart/search.cgi?keywords=Domain.
 
-<b>5. Show the domains in SVG using the cartoons generated from step 4.</b>
+<b>5. Show the domains in SVG using the cartoons generated from step 4.</b> (by the team)
 
   Input: A list of nodes with center, width, and length
 
