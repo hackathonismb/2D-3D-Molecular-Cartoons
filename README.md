@@ -22,7 +22,7 @@
 
   Output: a SVG text showing the nodes as ovals using the center, width and length
 
-<b>4. Use simple shapes (e.g., triangles, rectangles, ovals, hexagone, pentagon, etc) to represent the domains. Add some 3D effect and label to the shape.</b>
+<b>4. Use simple shapes (e.g., triangles, rectangles, ovals, hexagone, pentagon, etc) to represent the domains. Add some 3D effect and label to the shape.</b> (By Sarah Zhao and others)
 
   Input: a shape, e.g., hexagon
 
