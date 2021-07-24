@@ -36,3 +36,15 @@
 
   Output: a SVG text showing the nodes as improved cartoons from step 4
 
+## Team members
+Jiyao Wang (Team Lead)
+
+Li Chuin Chong (Writer)
+
+Kevin Yang (Tech Lead)
+
+Sarah Zhao
+
+Zhiyu Cheng
+
+(Jack Lin)
