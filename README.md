@@ -4,7 +4,7 @@
 2D representations of a 3D structure are very useful in understanding the structure. We are going to show the 2D cartoon in three different levels: chain level, domain level, and secondary structure level. Our main focus will be the domain level 2D cartoon.
 
 ## Steps to show 2D cartoon in the domain level
-<b>1. Get the residue range for each domain</b>
+<b>1. Get the residue range for each domain</b> (by Jiyao Wang)
 
   Input: chain ID, e.g., 6VXX_A
 
