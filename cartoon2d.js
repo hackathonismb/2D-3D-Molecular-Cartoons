@@ -60,8 +60,16 @@ class Cartoon2d {
        linkArray = node_link.link;
        linkStr = linkArray.join(', ');
 
-       var resStr = '{"nodes": [' + nodeStr + '], "links": [';
-       resStr += linkStr;
+       var selectedAtoms = ic.hAtoms;
+       var chemicalNodeStr = '';
+       var hBondLinkStr = '', ionicLinkStr = '', halogenpiLinkStr = '', contactLinkStr = '',
+         disulfideLinkStr = '', crossLinkStr = '';
+
+       contactLinkStr += ic.getGraphCls.getContactLinksForSet(ic.hAtoms, 'chain', true);
+
+       var resStr = '{"nodes": [' + nodeStr + chemicalNodeStr + '], "links": [';
+       resStr += linkStr + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
+
        resStr += ']}';
        return resStr;
     }
@@ -71,7 +79,7 @@ class Cartoon2d {
        var cnt = 0;
        var thickness = ic.icn3dui.htmlCls.ssValue;
 
-       var prevChain = '', prevResName = '', prevResi = 0, prevAtom;
+       var prevChain = '', prevResName = '', prevResi = 0, prevAtom, lastChain = '';
        var x, y, z, length = 0, prevX, prevY, prevZ;
        var bBegin = false, bEnd = true;
        var resName, residLabel;
@@ -112,6 +120,9 @@ class Cartoon2d {
        else if(type == 'domain') {
        }
        else if(type == 'secondary') {
+           ic.resi2resirange = {};
+           var resiArray = [], tmpResName;
+
            for(var i in ic.hAtoms) {
                var atom = ic.atoms[i];
                if(atom.chain == 'DUM') continue;
@@ -119,7 +130,8 @@ class Cartoon2d {
                if((atom.ssbegin || atom.ssend) && atom.name == "CA" && atom.elem == "C") {
                    var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
-                   if((prevChain === '' || prevChain == atom.chain) && bEnd && atom.ssbegin) {
+                   //if((prevChain === '' || prevChain == atom.chain) && bEnd && atom.ssbegin) {
+                   if(bEnd && atom.ssbegin) {
                        prevX = atom.coord.x;
                        prevY = atom.coord.y;
                        prevZ = atom.coord.z;
@@ -127,14 +139,23 @@ class Cartoon2d {
                        bEnd = false;
 
                        prevAtom = atom;
+
                        resName = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi
                        // add 1_1_ to match other conventionssuch as seq_div0_1KQ2_A_50
                        residLabel = '1_1_' + resid;
 
-                       prevChain = atom.chain;
+                       lastChain = atom.chain;
                    }
 
-                   if(prevChain == atom.chain && bBegin && atom.ssend) {
+                   if(bBegin) {
+                       tmpResName = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi
+                       tmpResName += '.' + atom.chain;
+                       if(Object.keys(ic.structures).length > 1) tmpResName += '.' + atom.structure;
+
+                       resiArray.push(tmpResName);
+                   }
+
+                   if(lastChain == atom.chain && bBegin && atom.ssend) {
                        x = 0.5 * (prevX + atom.coord.x);
                        y = 0.5 * (prevY + atom.coord.y);
                        z = 0.5 * (prevZ + atom.coord.z);
@@ -147,7 +168,16 @@ class Cartoon2d {
                        resName += '-' + atom.resi;
                        residLabel += '-' + atom.resi;
 
-                       if(cnt > 0) {
+                       resName += '.' + atom.chain;
+                       if(Object.keys(ic.structures).length > 1) resName += '.' + atom.structure;
+
+                       for(var j = 0, jl = resiArray.length; j < jl; ++j) {
+                           tmpResName = resiArray[j];
+                           ic.resi2resirange[tmpResName] = resName;
+                       }
+                       resiArray = [];
+
+                       if(cnt > 0 && prevChain == atom.chain) {
                            linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
                                + '", "v": ' + thickness + ', "c": "' + prevAtom.color.getHexString().toUpperCase() + '"}');
                        }
