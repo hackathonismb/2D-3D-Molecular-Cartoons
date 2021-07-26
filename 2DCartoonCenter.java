@@ -1,30 +1,30 @@
 public class 2DCartoonCenter {
     public class XYZPoint{
-        float xCoor;
-        float yCoor;
-        float zCoor;
-        //Constructor to create points. Assumed to be floats and not integers
-        public XYZPoint (float x, float y, float z) {
+        double xCoor;
+        double yCoor;
+        double zCoor;
+        //Constructor to create points. Assumed to be doubles and not integers
+        public XYZPoint (double x, double y, double z) {
             xCoor = x;
             yCoor = y;
             zCoor = z;
         }
 
-        float getX () {
+        double getX () {
             return xCoor;
         }
-        float getY() {
+        double getY() {
             return yCoor;
         }
-        float getZ() {
+        double getZ() {
             return zCoor;
         }
     }
     
     //Given XYZPoint array, find the center
     XYZPoint findCenter(XYZPoint[] list){
-        float xSum = 0; //total sum of x points
-        float ySum = 0; //total sum of y points
+        double xSum = 0; //total sum of x points
+        double ySum = 0; //total sum of y points
         int pointsTotal = 0;
 
         for (int i = 0; i < list.length; i++){ //add x and y coordinates to sum total and increasing point counter
@@ -33,13 +33,13 @@ public class 2DCartoonCenter {
             pointsTotal++;
         }
 
-        XYZPoint center = new XYZPoint((xSum/pointsTotal), (ySum/ pointsTotal), -1); //implicit conversion of quotient of float divided by int to float, z value doesn't matter
+        XYZPoint center = new XYZPoint((xSum/pointsTotal), (ySum/ pointsTotal), -1); //implicit conversion of quotient of double divided by int to double, z value doesn't matter
         return center;
     }
 
     //Given XYZPoint array, find the maximum X value
-    float maximumX(XYZPoint[] list){
-        float xMax = Float.NEGATIVE_INFINITY; //Float.MIN_VALUE is a small, non-negative number and can't be used if there are negatives 
+    double maximumX(XYZPoint[] list){
+        double xMax = Double.NEGATIVE_INFINITY; //Double.MIN_VALUE is a small, non-negative number and can't be used if there are negatives 
         for (int i = 0; i < list.length; i++){ 
             if(list[i].getX() > xMax){
                 xMax = list[i].getX();
@@ -48,8 +48,8 @@ public class 2DCartoonCenter {
         return xMax;
     }
     //Given XYZPoint array, find the minimum X value
-    float minimumX(XYZPoint[] list){
-        float xMin = Float.MAX_VALUE;
+    double minimumX(XYZPoint[] list){
+        double xMin = Double.MAX_VALUE;
         for (int i = 0; i < list.length; i++){ 
             if(list[i].getX() < xMin){
                 xMin = list[i].getX();
@@ -58,8 +58,8 @@ public class 2DCartoonCenter {
         return xMin;
     }
     //Given XYZPoint array, find the maximum Y value
-    float maximumY(XYZPoint[] list){
-        float yMax = Float.NEGATIVE_INFINITY;
+    double maximumY(XYZPoint[] list){
+        double yMax = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < list.length; i++){ 
             if(list[i].getY() > yMax){
                 yMax = list[i].getY();
@@ -68,13 +68,20 @@ public class 2DCartoonCenter {
         return yMax;
     }
     //Given XYZPoint array, find the minimum X value
-    float minimumY(XYZPoint[] list){
-        float yMin = Float.MAX_VALUE;
+    double minimumY(XYZPoint[] list){
+        double yMin = Double.MAX_VALUE;
         for (int i = 0; i < list.length; i++){ 
             if(list[i].getY() < yMin){
                 yMin = list[i].getY();
             }
         }
         return yMin;
+    }
+    
+    double xRange(XYZPoint[] list){
+        return maximumX(list) - minimumX(list);
+    }
+    double yRange(XYZPoint[]list){
+        return maximumY(list) - minimumY(list);   
     }
 }
