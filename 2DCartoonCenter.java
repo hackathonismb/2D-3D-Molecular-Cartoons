@@ -72,7 +72,7 @@ public class 2DCartoonCenter {
         double yMin = Double.MAX_VALUE;
         for (int i = 0; i < list.length; i++){ 
             if(list[i].getY() < yMin){
-                yMin = list[i].getY();
+                yMin = list[i].getY(); 
             }
         }
         return yMin;
