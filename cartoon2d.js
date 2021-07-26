@@ -20,20 +20,28 @@ class Cartoon2d {
     }
 
     draw2Dcartoon(type) { var ic = this.icn3d, me = ic.icn3dui;
-       ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
+        var thisClass = this;
 
-       ic.bGraph = false; // differentiate from force-directed graph for interactions
+        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
+        ic.bGraph = false; // differentiate from force-directed graph for interactions
 
-       ic.graphStr = this.getCartoonData(type);
-
-       ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
+        if(type == 'domain' && !ic.chainid2pssmid) {
+            $.when(thisClass.getNodesLinksForSetCartoon(type)).then(function() {
+               ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
+               ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
+            });
+        }
+        else {
+            this.getNodesLinksForSetCartoonBase(type);
+            ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
+            ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
+        }
     }
 
-    getCartoonData(type) { var ic = this.icn3d, me = ic.icn3dui;
+    getCartoonData(type, node_link) { var ic = this.icn3d, me = ic.icn3dui;
        // get the nodes and links data
        var nodeArray = [], linkArray = [];
        var nodeStr, linkStr;
-       var node_link = this.getNodesLinksForSetCartoon(type);
 
        nodeArray = node_link.node;
 
@@ -75,6 +83,17 @@ class Cartoon2d {
     }
 
     getNodesLinksForSetCartoon(type) { var ic = this.icn3d, me = ic.icn3dui;
+      var thisClass = this;
+
+      // chain functions together
+      ic.deferredCartoon2d = $.Deferred(function() {
+          thisClass.getNodesLinksForSetCartoonBase(type);
+      });
+
+      return ic.deferredCartoon2d.promise();
+    }
+
+    getNodesLinksForSetCartoonBase(type) { var ic = this.icn3d, me = ic.icn3dui;
        var thisClass = this;
 
        var nodeArray = [], linkArray = [];
@@ -268,7 +287,10 @@ class Cartoon2d {
            }
        }
 
-       return {"node": nodeArray, "link":linkArray};
+       ic.node_link = {"node": nodeArray, "link":linkArray};
+
+       if(ic.deferredCartoon2d !== undefined) ic.deferredCartoon2d.resolve();
+       //return {"node": nodeArray, "link":linkArray};
     }
 
     click2Dcartoon() { var ic = this.icn3d, me = ic.icn3dui;
