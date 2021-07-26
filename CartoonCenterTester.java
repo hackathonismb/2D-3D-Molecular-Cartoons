@@ -1,7 +1,7 @@
 public class CartoonCenterTester {
     public static void main(String[] args){
         XYZPoint[] pointList;
-        Center finder = new Center();
+        CartoonCenter finder = new CartoonCenter();
 
         CartoonCenter.XYZPoint point1 = finder.new XYZPoint(1.0,1.0,1.0);
         CartoonCenter.XYZPoint point2 = finder.new XYZPoint(2.0,2.0,2.0);
