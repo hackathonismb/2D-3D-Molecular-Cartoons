@@ -75,6 +75,8 @@ class Cartoon2d {
     }
 
     getNodesLinksForSetCartoon(type) { var ic = this.icn3d, me = ic.icn3dui;
+       var thisClass = this;
+
        var nodeArray = [], linkArray = [];
        var cnt = 0;
        var thickness = ic.icn3dui.htmlCls.defaultValue; // 1
