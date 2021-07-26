@@ -4,8 +4,8 @@
 2D representations of a 3D structure are very useful in understanding the structure. We are going to show the 2D cartoon in three different levels: chain level, domain level, and secondary structure level. Our main focus will be the domain level 2D cartoon.
 
 ## Workflow
-<img src="https://github.com/hackathonismb/2D-3D-Molecular-Cartoons/pipeline.png" width="400"/><br><br>
-<img src="https://github.com/hackathonismb/2D-3D-Molecular-Cartoons/2dcartoon-levels.png" width="400"/><br><br>
+<img src="https://github.com/hackathonismb/2D-3D-Molecular-Cartoons/blob/main/pipeline.png" width="400"/><br><br>
+<img src="https://github.com/hackathonismb/2D-3D-Molecular-Cartoons/blob/main/2dcartoon-levels.png" width="400"/><br><br>
 
 ## Steps to show 2D cartoon in the domain level
 <b>1. Get the residue range for each domain</b> (by Jiyao Wang)
