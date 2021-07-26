@@ -20,13 +20,13 @@ class Cartoon2d {
     }
 
     draw2Dcartoon(type) { var ic = this.icn3d, me = ic.icn3dui;
+       ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
+
        ic.bGraph = false; // differentiate from force-directed graph for interactions
 
-       var graphStr = this.getCartoonData(type);
+       ic.graphStr = this.getCartoonData(type);
 
-       ic.viewInterPairsCls.drawGraphWrapper(graphStr, ic.deferredCartoon2d);
-
-       ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
+       ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
     }
 
     getCartoonData(type) { var ic = this.icn3d, me = ic.icn3dui;
@@ -65,7 +65,7 @@ class Cartoon2d {
        var hBondLinkStr = '', ionicLinkStr = '', halogenpiLinkStr = '', contactLinkStr = '',
          disulfideLinkStr = '', crossLinkStr = '';
 
-       contactLinkStr += ic.getGraphCls.getContactLinksForSet(ic.hAtoms, 'chain', true);
+//       contactLinkStr += ic.getGraphCls.getContactLinksForSet(ic.hAtoms, 'chain', true);
 
        var resStr = '{"nodes": [' + nodeStr + chemicalNodeStr + '], "links": [';
        resStr += linkStr + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
@@ -77,7 +77,7 @@ class Cartoon2d {
     getNodesLinksForSetCartoon(type) { var ic = this.icn3d, me = ic.icn3dui;
        var nodeArray = [], linkArray = [];
        var cnt = 0;
-       var thickness = ic.icn3dui.htmlCls.ssValue;
+       var thickness = ic.icn3dui.htmlCls.defaultValue; // 1
 
        var prevChain = '', prevResName = '', prevResi = 0, prevAtom, lastChain = '';
        var x, y, z, length = 0, prevX, prevY, prevZ;
@@ -118,6 +118,14 @@ class Cartoon2d {
            }
        }
        else if(type == 'domain') {
+           if(!ic.chainid2pssmid) { // mmtf data do NOT have the missing residues
+                $.when(ic.loadScriptCls.applyCommandAnnotationsAndCddSite('view annotations')).then(function() {
+                   return thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
+                });
+           }
+           else {
+                return this.getNodesLinksForDomains(ic.chainid2pssmid);
+           }
        }
        else if(type == 'secondary') {
            ic.resi2resirange = {};
@@ -192,7 +200,73 @@ class Cartoon2d {
            } //end for
        }
 
-       return {"node": nodeArray, "link":linkArray}
+       return {"node": nodeArray, "link":linkArray};
+    }
+
+    getNodesLinksForDomains(chainid2pssmid) { var ic = this.icn3d, me = ic.icn3dui;
+       var nodeArray = [], linkArray = [];
+       var cnt = 0;
+       var thickness = ic.icn3dui.htmlCls.defaultValue; // 1
+
+       var prevChain = '', prevResName = '', prevResi = 0, prevAtom, lastChain = '';
+       var x, y, z, length = 0, prevX, prevY, prevZ;
+       var resName, residLabel;
+
+       var setName = 'a';
+
+       ic.resi2resirange = {};
+       var resiArray = [], tmpResName;
+
+       // find the chainids
+       var chainidHash = {};
+       for(var i in ic.hAtoms) {
+           var atom = ic.atoms[i];
+           if(atom.chain == 'DUM') continue;
+
+           chainidHash[atom.structure + '_' + atom.chain] = 1;
+       }
+
+       // show domains for each chain
+       for(var chainid in chainidHash) {
+           if(!chainid2pssmid.hasOwnProperty(chainid)) continue;
+
+           var pssmid2name = chainid2pssmid[chainid].pssmid2name;
+           var pssmid2fromArray = chainid2pssmid[chainid].pssmid2fromArray;
+           var pssmid2toArray = chainid2pssmid[chainid].pssmid2toArray;
+
+           for(var pssmid in pssmid2name) {
+               var domainName = pssmid2name[pssmid];
+               var fromArray = pssmid2fromArray[pssmid];
+               var toArray = pssmid2toArray[pssmid];
+
+               var atomSet = {};
+               for(var j = 0, jl = fromArray.length; j < jl; ++j) {
+                   var resiStart = fromArray[j] + 1;
+                   var resiEnd = toArray[j] + 1;
+
+                   for(var k = resiStart; k <= resiEnd; ++k) {
+                       atomSet = me.hashUtilsCls.unionHash(atomSet, ic.residues[chainid + '_' + k]);
+                   }
+               }
+
+               if(Object.keys(atomSet).length == 0) continue;
+
+               var extent = ic.contactCls.getExtent(atomSet);
+
+               var radiusSq = (extent[1][0] - extent[0][0]) * (extent[1][0] - extent[0][0]) + (extent[1][1] - extent[0][1]) * (extent[1][1] - extent[0][1]) + (extent[1][2] - extent[0][2]) * (extent[1][2] - extent[0][2]);
+               var radius = Math.sqrt(radiusSq);
+
+               var serial = Object.keys(atomSet)[0];
+               var atom = ic.atoms[serial];
+
+               residLabel = chainid;
+
+               nodeArray.push('{"id": "' + domainName + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + extent[2][0].toFixed(0)
+                   + ', "y": ' + extent[2][1].toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+           }
+       }
+
+       return {"node": nodeArray, "link":linkArray};
     }
 
     click2Dcartoon() { var ic = this.icn3d, me = ic.icn3dui;
