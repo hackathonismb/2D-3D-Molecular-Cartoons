@@ -1,4 +1,4 @@
-public class 2DCartoonCenter {
+public class CartoonCenter {
     public class XYZPoint{
         double xCoor;
         double yCoor;
