@@ -221,7 +221,7 @@ class Cartoon2d {
            } //end for
        }
 
-       return {"node": nodeArray, "link":linkArray};
+       ic.node_link = {"node": nodeArray, "link":linkArray};
     }
 
     getNodesLinksForDomains(chainid2pssmid) { var ic = this.icn3d, me = ic.icn3dui;
@@ -257,6 +257,9 @@ class Cartoon2d {
 
            for(var pssmid in pssmid2name) {
                var domainName = pssmid2name[pssmid];
+               domainName += '.' + chainid.substr(chainid.indexOf('_') + 1);
+               if(Object.keys(ic.structures).length > 1) domainName += '.' + chainid.substr(0, chainid.indexOf('_'));
+
                var fromArray = pssmid2fromArray[pssmid];
                var toArray = pssmid2toArray[pssmid];
 
