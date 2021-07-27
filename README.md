@@ -1,5 +1,8 @@
 # 2D-3D-Molecular-Cartoons
 
+## What is the PROBLEM?
+Graphical language is the most intuitive and most understandable way in human communication - 'a picture is worth a thousand words'. Molecular graphics is widely used in the field of biology and medicine to illustrate the complex molecular structure. A molecular three-dimensional (3D) architecture is normally illustrated with various models, including ribbon, ball-and-stick, sphere (CPK), among other representations. However, an emerging requirement from biologists is to schematically depict those information on a two-dimensional (2D) figure. The simplified 2D version may provide a straightforward and easy understanding of a complex 3D protein structure. Although 2D and 3D visualisation are complementary to each other, simplification of the complex 3D into 2D illustration is still challenging, especially to exhibit the molecular configurations, profiles, and interactions. Herein, we are trying to showcase the 2D cartoons in three different levels, namely chain level, domain level (main focus) and secondary structure level.
+
 ## Objective
 2D representations of a 3D structure are very useful in understanding the structure. We are going to show the 2D cartoon in three different levels: chain level, domain level, and secondary structure level. Our main focus will be the domain level 2D cartoon.
 
