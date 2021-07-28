@@ -44,14 +44,14 @@ Graphical language is the most intuitive and most understandable way in human co
   Output: a SVG text showing the nodes as improved cartoons from step 4
 
 ## Team members
-Jiyao Wang (Team Lead)
+Jiyao Wang (Team Lead), National Center for Biotechnology Information (NCBI)
 
-Li Chuin Chong (Writer)
+Li Chuin Chong (Writer), Bezmialem Vakıf Universty, Turkey
 
-Kevin Yang (Tech Lead)
+Kevin Yang (Tech Lead), University of Maryland, College Park
 
-Sarah Zhao
+Sarah Zhao, Cary Academy, North Carolina, USA
 
-Zhiyu Cheng
+Zhiyu Cheng, University of California, Irvine
 
-Jack Lin
+Jack Lin, University of Washington, Tacoma
