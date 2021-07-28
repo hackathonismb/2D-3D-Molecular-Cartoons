@@ -19,8 +19,8 @@ class Cartoon2d {
         this.icn3d = icn3d;
     }
 
-    draw2Dcartoon(type) { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    draw2Dcartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
         ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
         ic.bGraph = false; // differentiate from force-directed graph for interactions
@@ -38,29 +38,29 @@ class Cartoon2d {
         }
     }
 
-    getCartoonData(type, node_link) { var ic = this.icn3d, me = ic.icn3dui;
+    getCartoonData(type, node_link) { let ic = this.icn3d, me = ic.icn3dui;
        // get the nodes and links data
-       var nodeArray = [], linkArray = [];
-       var nodeStr, linkStr;
+       let nodeArray = [], linkArray = [];
+       let nodeStr, linkStr;
 
        nodeArray = node_link.node;
 
        // removed duplicated nodes
-       var nodeJsonArray = [];
-       var checkedNodeidHash = {}
-       var cnt = 0;
-       for(var i = 0, il = nodeArray.length; i < il; ++i) {
-           var node = nodeArray[i];
-           var nodeJson = JSON.parse(node);
+       let nodeJsonArray = [];
+       let checkedNodeidHash = {}
+       let cnt = 0;
+       for(let i = 0, il = nodeArray.length; i < il; ++i) {
+           let node = nodeArray[i];
+           let nodeJson = JSON.parse(node);
            if(!checkedNodeidHash.hasOwnProperty(nodeJson.id)) {
                nodeJsonArray.push(nodeJson);
                checkedNodeidHash[nodeJson.id] = cnt;
                ++cnt;
            }
        }
-       var nodeStrArray = [];
-       for(var i = 0, il = nodeJsonArray.length; i < il; ++i) {
-           var nodeJson = nodeJsonArray[i];
+       let nodeStrArray = [];
+       for(let i = 0, il = nodeJsonArray.length; i < il; ++i) {
+           let nodeJson = nodeJsonArray[i];
            nodeStrArray.push(JSON.stringify(nodeJson));
        }
        nodeStr = nodeStrArray.join(', ');
@@ -68,22 +68,23 @@ class Cartoon2d {
        linkArray = node_link.link;
        linkStr = linkArray.join(', ');
 
-       var selectedAtoms = ic.hAtoms;
-       var chemicalNodeStr = '';
-       var hBondLinkStr = '', ionicLinkStr = '', halogenpiLinkStr = '', contactLinkStr = '',
+       let selectedAtoms = ic.hAtoms;
+       let chemicalNodeStr = '';
+       let hBondLinkStr = '', ionicLinkStr = '', halogenpiLinkStr = '', contactLinkStr = '',
          disulfideLinkStr = '', crossLinkStr = '';
 
 //       contactLinkStr += ic.getGraphCls.getContactLinksForSet(ic.hAtoms, 'chain', true);
 
-       var resStr = '{"nodes": [' + nodeStr + chemicalNodeStr + '], "links": [';
+       let resStr = '{"nodes": [' + nodeStr + chemicalNodeStr + '], "links": [';
        resStr += linkStr + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
 
-       resStr += ']}';
+       let level = (node_link.level) ? node_link.level : '';
+       resStr += '], "level": "' + level + '"}';
        return resStr;
     }
 
-    getNodesLinksForSetCartoon(type) { var ic = this.icn3d, me = ic.icn3dui;
-      var thisClass = this;
+    getNodesLinksForSetCartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredCartoon2d = $.Deferred(function() {
@@ -93,27 +94,27 @@ class Cartoon2d {
       return ic.deferredCartoon2d.promise();
     }
 
-    getNodesLinksForSetCartoonBase(type) { var ic = this.icn3d, me = ic.icn3dui;
-       var thisClass = this;
+    getNodesLinksForSetCartoonBase(type) { let ic = this.icn3d, me = ic.icn3dui;
+       let thisClass = this;
 
-       var nodeArray = [], linkArray = [];
-       var cnt = 0;
-       var thickness = ic.icn3dui.htmlCls.defaultValue; // 1
+       let nodeArray = [], linkArray = [];
+       let cnt = 0;
+       let thickness = ic.icn3dui.htmlCls.defaultValue; // 1
 
-       var prevChain = '', prevResName = '', prevResi = 0, prevAtom, lastChain = '';
-       var x, y, z, length = 0, prevX, prevY, prevZ;
-       var bBegin = false, bEnd = true;
-       var resName, residLabel;
+       let prevChain = '', prevResName = '', prevResi = 0, prevAtom, lastChain = '';
+       let x, y, z, length = 0, prevX, prevY, prevZ;
+       let bBegin = false, bEnd = true;
+       let resName, residLabel;
 
-       var setName = 'a';
+       let setName = 'a';
 
        if(type == 'chain') {
-           var chainidHash = {};
-           for(var i in ic.hAtoms) {
-               var atom = ic.atoms[i];
+           let chainidHash = {};
+           for(let i in ic.hAtoms) {
+               let atom = ic.atoms[i];
                if(atom.chain == 'DUM') continue;
 
-               var chainid = atom.structure + '_' + atom.chain;
+               let chainid = atom.structure + '_' + atom.chain;
 
                if(ic.proteins.hasOwnProperty(i)) {
                    if(!chainidHash.hasOwnProperty(chainid)) {
@@ -123,20 +124,33 @@ class Cartoon2d {
                }
            }
 
-           for(var chainid in chainidHash) {
-               var extent = ic.contactCls.getExtent(chainidHash[chainid]);
+           for(let chainid in chainidHash) {
+               ic.hAtom = {};
+               ic.hAtoms = me.hashUtilsCls.cloneHash(ic.chains[chainid]);
 
-               var radiusSq = (extent[1][0] - extent[0][0]) * (extent[1][0] - extent[0][0]) + (extent[1][1] - extent[0][1]) * (extent[1][1] - extent[0][1]) + (extent[1][2] - extent[0][2]) * (extent[1][2] - extent[0][2]);
-               var radius = Math.sqrt(radiusSq);
+               let center_x_y_z = ic.axesCls.setPc1Axes();
+               let center = center_x_y_z[0];
+               let rx = center_x_y_z[1].distanceTo(center_x_y_z[0]);
+               let ry = center_x_y_z[2].distanceTo(center_x_y_z[0]);
+               let angle = new THREE.Vector2(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / 3.1416;
+               if(angle > 180) angle -= 180;
 
-               var serial = Object.keys(chainidHash[chainid])[0];
-               var atom = ic.atoms[serial];
+               let serial = Object.keys(ic.hAtoms)[0];
+               let atom = ic.atoms[serial];
 
-               residLabel = chainid;
+               residLabel = chainid.substr(chainid.lastIndexOf('_') + 1); //chainid;
+               let shapeid = 0;
 
-               nodeArray.push('{"id": "' + chainid + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + extent[2][0].toFixed(0)
-                   + ', "y": ' + extent[2][1].toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+               nodeArray.push('{"id": "' + chainid + '", "r": "' + residLabel + '", "s": "' + setName
+                   + '", "x": ' + center.x.toFixed(0) + ', "y": ' + center.y.toFixed(0)
+                   + ', "rx": ' + rx.toFixed(0) + ', "ry": ' + ry.toFixed(0)
+                   + ', "ang": ' + angle.toFixed(0) + ', "shape": ' + shapeid
+                   + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
            }
+
+           ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+
+           ic.node_link = {"node": nodeArray, "link":linkArray, "level": "chain"};
        }
        else if(type == 'domain') {
            if(!ic.chainid2pssmid) { // mmtf data do NOT have the missing residues
@@ -150,14 +164,14 @@ class Cartoon2d {
        }
        else if(type == 'secondary') {
            ic.resi2resirange = {};
-           var resiArray = [], tmpResName;
+           let resiArray = [], tmpResName;
 
-           for(var i in ic.hAtoms) {
-               var atom = ic.atoms[i];
+           for(let i in ic.hAtoms) {
+               let atom = ic.atoms[i];
                if(atom.chain == 'DUM') continue;
 
                if((atom.ssbegin || atom.ssend) && atom.name == "CA" && atom.elem == "C") {
-                   var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                   let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
                    //if((prevChain === '' || prevChain == atom.chain) && bEnd && atom.ssbegin) {
                    if(bEnd && atom.ssbegin) {
@@ -200,7 +214,7 @@ class Cartoon2d {
                        resName += '.' + atom.chain;
                        if(Object.keys(ic.structures).length > 1) resName += '.' + atom.structure;
 
-                       for(var j = 0, jl = resiArray.length; j < jl; ++j) {
+                       for(let j = 0, jl = resiArray.length; j < jl; ++j) {
                            tmpResName = resiArray[j];
                            ic.resi2resirange[tmpResName] = resName;
                        }
@@ -219,105 +233,145 @@ class Cartoon2d {
                    }
                }
            } //end for
-       }
 
-       ic.node_link = {"node": nodeArray, "link":linkArray};
+           ic.node_link = {"node": nodeArray, "link":linkArray};
+       }
     }
 
-    getNodesLinksForDomains(chainid2pssmid) { var ic = this.icn3d, me = ic.icn3dui;
-       var nodeArray = [], linkArray = [];
-       var cnt = 0;
-       var thickness = ic.icn3dui.htmlCls.defaultValue; // 1
+    getNodesLinksForDomains(chainid2pssmid) { let ic = this.icn3d, me = ic.icn3dui;
+       let nodeArray = [], linkArray = [];
+       let cnt = 0;
+       let thickness = ic.icn3dui.htmlCls.defaultValue; // 1
 
-       var prevChain = '', prevResName = '', prevResi = 0, prevAtom, lastChain = '';
-       var x, y, z, length = 0, prevX, prevY, prevZ;
-       var resName, residLabel;
+       let prevChain = '', prevResName = '', prevResi = 0, prevAtom, lastChain = '';
+       let x, y, z, length = 0, prevX, prevY, prevZ;
+       let resName, residLabel;
 
-       var setName = 'a';
+       let setName = 'a';
 
        ic.resi2resirange = {};
-       var resiArray = [], tmpResName;
+       let resiArray = [], tmpResName;
 
        // find the chainids
-       var chainidHash = {};
-       for(var i in ic.hAtoms) {
-           var atom = ic.atoms[i];
+       let chainidHash = {};
+       for(let i in ic.hAtoms) {
+           let atom = ic.atoms[i];
            if(atom.chain == 'DUM') continue;
 
            chainidHash[atom.structure + '_' + atom.chain] = 1;
        }
 
        // show domains for each chain
-       for(var chainid in chainidHash) {
+       for(let chainid in chainidHash) {
            if(!chainid2pssmid.hasOwnProperty(chainid)) continue;
 
-           var pssmid2name = chainid2pssmid[chainid].pssmid2name;
-           var pssmid2fromArray = chainid2pssmid[chainid].pssmid2fromArray;
-           var pssmid2toArray = chainid2pssmid[chainid].pssmid2toArray;
+           let pssmid2name = chainid2pssmid[chainid].pssmid2name;
+           let pssmid2fromArray = chainid2pssmid[chainid].pssmid2fromArray;
+           let pssmid2toArray = chainid2pssmid[chainid].pssmid2toArray;
 
-           for(var pssmid in pssmid2name) {
-               var domainName = pssmid2name[pssmid];
+           // sort the domains according to the starting residue number
+           let pssmid2start = {};
+           for(let pssmid in pssmid2name) {
+               let fromArray = pssmid2fromArray[pssmid];
+               pssmid2start[pssmid] = fromArray[0];
+           }
+
+           var pssmidArray = Object.keys(pssmid2start);
+           pssmidArray.sort(function(a, b) {
+               return pssmid2start[a] - pssmid2start[b]
+           });
+
+           let bNewChain = true;
+           let prevDomainName, prevAtom;
+           //for(let pssmid in pssmid2name) {
+           for(let i = 0, il = pssmidArray.length; i < il; ++i) {
+               let pssmid = pssmidArray[i];
+
+               let domainName = pssmid2name[pssmid];
                domainName += '.' + chainid.substr(chainid.indexOf('_') + 1);
                if(Object.keys(ic.structures).length > 1) domainName += '.' + chainid.substr(0, chainid.indexOf('_'));
 
-               var fromArray = pssmid2fromArray[pssmid];
-               var toArray = pssmid2toArray[pssmid];
+               let fromArray = pssmid2fromArray[pssmid];
+               let toArray = pssmid2toArray[pssmid];
 
-               var atomSet = {};
-               for(var j = 0, jl = fromArray.length; j < jl; ++j) {
-                   var resiStart = fromArray[j] + 1;
-                   var resiEnd = toArray[j] + 1;
+               ic.hAtoms = {};
+               for(let j = 0, jl = fromArray.length; j < jl; ++j) {
+                   let resiStart = fromArray[j] + 1;
+                   let resiEnd = toArray[j] + 1;
 
-                   for(var k = resiStart; k <= resiEnd; ++k) {
-                       atomSet = me.hashUtilsCls.unionHash(atomSet, ic.residues[chainid + '_' + k]);
+                   for(let k = resiStart; k <= resiEnd; ++k) {
+                       ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[chainid + '_' + k]);
                    }
                }
 
-               if(Object.keys(atomSet).length == 0) continue;
+               if(Object.keys(ic.hAtoms).length == 0) continue;
 
-               var extent = ic.contactCls.getExtent(atomSet);
+               //let extent = ic.contactCls.getExtent(atomSet);
 
-               var radiusSq = (extent[1][0] - extent[0][0]) * (extent[1][0] - extent[0][0]) + (extent[1][1] - extent[0][1]) * (extent[1][1] - extent[0][1]) + (extent[1][2] - extent[0][2]) * (extent[1][2] - extent[0][2]);
-               var radius = Math.sqrt(radiusSq);
+               //let radiusSq = (extent[1][0] - extent[0][0]) * (extent[1][0] - extent[0][0]) + (extent[1][1] - extent[0][1]) * (extent[1][1] - extent[0][1]) + (extent[1][2] - extent[0][2]) * (extent[1][2] - extent[0][2]);
+               //let radius = Math.sqrt(radiusSq);
 
-               var serial = Object.keys(atomSet)[0];
-               var atom = ic.atoms[serial];
+               let center_x_y_z = ic.axesCls.setPc1Axes();
+               let center = center_x_y_z[0];
+               let rx = center_x_y_z[1].distanceTo(center_x_y_z[0]);
+               let ry = center_x_y_z[2].distanceTo(center_x_y_z[0]);
+               let angle = new THREE.Vector2(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / 3.1416;
+               if(angle > 180) angle -= 180;
+
+               let serial = Object.keys(ic.hAtoms)[0];
+               let atom = ic.atoms[serial];
 
                residLabel = chainid;
+               let shapeid = 0;
 
-               nodeArray.push('{"id": "' + domainName + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + extent[2][0].toFixed(0)
-                   + ', "y": ' + extent[2][1].toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+               if(prevDomainName !== undefined) {
+                   linkArray.push('{"source": "' + prevDomainName + '", "target": "' + domainName
+                       + '", "v": ' + thickness + ', "c": "' + prevAtom.color.getHexString().toUpperCase() + '"}');
+               }
+
+               //nodeArray.push('{"id": "' + domainName + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + extent[2][0].toFixed(0)
+               //    + ', "y": ' + extent[2][1].toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+               nodeArray.push('{"id": "' + domainName + '", "r": "' + residLabel + '", "s": "' + setName
+                   + '", "x": ' + center.x.toFixed(0) + ', "y": ' + center.y.toFixed(0)
+                   + ', "rx": ' + rx.toFixed(0) + ', "ry": ' + ry.toFixed(0)
+                   + ', "ang": ' + angle.toFixed(0) + ', "shape": ' + shapeid
+                   + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+
+               prevDomainName = domainName;
+               prevAtom = atom;
            }
        }
 
-       ic.node_link = {"node": nodeArray, "link":linkArray};
+       ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+
+       ic.node_link = {"node": nodeArray, "link":linkArray, "level": "domain"};
 
        if(ic.deferredCartoon2d !== undefined) ic.deferredCartoon2d.resolve();
        //return {"node": nodeArray, "link":linkArray};
     }
 
-    click2Dcartoon() { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    click2Dcartoon() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
-        me.myEventCls.onIds("#" + me.pre + "2ddgm_chain", "click", function(e) { var ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "2ddgm_chain", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.cartoon2dCls.draw2Dcartoon('chain');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "2ddgm_domain", "click", function(e) { var ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "2ddgm_domain", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.cartoon2dCls.draw2Dcartoon('domain');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "2ddgm_secondary", "click", function(e) { var ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "2ddgm_secondary", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.cartoon2dCls.draw2Dcartoon('secondary');
         });
 
-        //$(document).on("click", "#" + ic.pre + "dl_2ddgm .icn3d-node", function(e) { var ic = thisClass.icn3d;
+        //$(document).on("click", "#" + ic.pre + "dl_2ddgm .icn3d-node", function(e) { let ic = thisClass.icn3d;
         //    e.stopImmediatePropagation();
         //});
     }
